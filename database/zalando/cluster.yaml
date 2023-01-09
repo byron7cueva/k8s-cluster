@@ -1,0 +1,53 @@
+# Documentation: https://github.com/zalando/postgres-operator/blob/master/docs/reference/cluster_manifest.md
+# Documentation: https://github.com/zalando/postgres-operator/blob/master/docs/user.md
+# Documentation: https://github.com/zalando/postgres-operator/blob/master/docs/administrator.md
+# Example: https://github.com/zalando/postgres-operator/blob/master/manifests/complete-postgres-manifest.yaml
+apiVersion: acid.zalan.do/v1
+kind: postgresql
+metadata:
+  labels:
+    team: postgres
+  name: postgres-cluster
+  namespace: postgres
+spec:
+  spiloFSGroup: 103
+  teamId: postgres
+  numberOfInstances: 1
+  #tls:
+  #  secretName: kc-tls-sct
+  postgresql:
+    version: '14'
+    parameters:  # Expert section
+      shared_buffers: "512MB"
+      max_connections: "100"
+      work_mem: "10MB"
+      effective_cache_size: "1GB"
+    #  log_statement: "all"
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 250Mi
+  patroni:
+    # Documentation: https://patroni.readthedocs.io/en/latest/SETTINGS.html
+    initdb:
+      encoding: "UTF8"
+      locale: "en_US.UTF-8"
+      data-checksums: "true"
+  users:
+    postgres:
+    - superuser
+    - createdb
+  databases:
+    postgres: postgres
+  enableMasterLoadBalancer: true
+  enableReplicaLoadBalancer: true
+  #allowedSourceRanges: null # load balancers' source ranges for both master and replica services
+  # - 127.0.0.1/32
+  enableConnectionPooler: false # enable/disable connection pooler deployment
+  enableReplicaConnectionPooler: false # set to enable connectionPooler for replica service
+  volume:
+    storageClass: bm2c-postgres-sc
+    size: 20Gi

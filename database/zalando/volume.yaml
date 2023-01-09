@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bm2c-postgres-pv
+  namespace: postgres
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 20Gi
+  nfs:
+    path: /run/media/byron/Vm/nfs/postgresql/instance1
+    server: 192.168.1.121
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: bm2c-postgres-sc
+  volumeMode: Filesystem

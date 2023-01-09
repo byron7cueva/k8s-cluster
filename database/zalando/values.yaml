@@ -1,0 +1,87 @@
+# Documentation: https://github.com/zalando/postgres-operator/blob/master/docs/reference/operator_parameters.md
+# Example: https://github.com/zalando/postgres-operator/blob/master/charts/postgres-operator/values.yaml
+# enable CRD configuration
+
+image:
+   registry: registry.opensource.zalan.do
+   repository: acid/postgres-operator
+   tag: v1.8.2-61-g29cec0ce
+
+configTarget: OperatorConfigurationCRD
+
+# the following values ARE THE DEFAULT VALUES. unfortunately they are coded as
+# strings in the default values.yaml, and the verification (rightfully) complains
+# that either boolean or integer values are needed. so we have to re-include them
+# here but with the correct data type.
+# the only exceptions to this are the commented-out values, which contain integers,
+# but are needed as strings. what a mess.
+
+configGeneral:
+  enable_lazy_spilo_upgrade: false
+  enable_pgversion_env_var: true
+  enable_shm_volume: true
+  enable_spilo_wal_path_compat: false
+  kubernetes_use_configmaps: true
+  min_instances: -1
+  max_instances: -1
+  workers: 8
+
+configUsers:
+  super_username: postgres
+  replication_username: standby
+
+configMajorVersionUpgrade:
+  # "off": no upgrade, "manual": manifest triggers action, "full": minimal version violation triggers too
+  major_version_upgrade_mode: "off"
+  # minimal Postgres major version that will not automatically be upgraded
+  minimal_major_version: "14"
+  # target Postgres major version when upgrading clusters automatically
+  target_major_version: "14"
+
+configKubernetes:
+  cluster_labels: 
+    application: spilo
+  enable_init_containers: true
+  enable_pod_antiaffinity: false
+  enable_pod_disruption_budget: true
+  enable_sidecars: true
+  spilo_privileged: false
+  spilo_allow_privilege_escalation: true
+
+configPostgresPodResources:
+   # CPU request value for the postgres containers
+  default_cpu_request: 500m
+  # memory request value for the postgres containers
+  default_memory_request: 250Mi
+  # hard CPU minimum required to properly run a Postgres cluster
+  min_cpu_limit: 250m
+  # hard memory minimum required to properly run a Postgres cluster
+  min_memory_limit: 250Mi
+
+configLoadBalancer:
+  # DNS zone for cluster DNS name when load balancer is configured for cluster
+  db_hosted_zone: dbpostgres.uts.cw
+  enable_master_load_balancer: true
+  enable_replica_load_balancer: true
+
+configDebug:
+  debug_logging: true
+  enable_database_access: true
+
+configAwsOrGcp:
+  enable_ebs_gp3_migration: false
+
+configTeamsApi:
+  enable_postgres_team_crd: false
+  enable_teams_api: false
+
+configConnectionPooler:
+  connection_pooler_number_of_instances: 3
+  connection_pooler_max_db_connections: 120
+  # default resources
+  connection_pooler_default_cpu_request: 500m
+  connection_pooler_default_memory_request: 100Mi
+  connection_pooler_default_cpu_limit: "1"
+  connection_pooler_default_memory_limit: 256Mi
+
+spilo_fsgroup: 103
