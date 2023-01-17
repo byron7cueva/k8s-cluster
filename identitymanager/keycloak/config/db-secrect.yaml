@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bm2c-db-sct
+  namespace: keycloak
+type: Opaque
+data:
+  # jdbc:postgresql://postgres-cluster.postgres.svc.cluster.local/keycloakdb
+  kc_db_url: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXMtY2x1c3Rlci5wb3N0Z3Jlcy5zdmMuY2x1c3Rlci5sb2NhbC9rZXljbG9ha2Ri
+  kc_db_username: Ym0yY2FkbWlu
+  kc_db_password: YWRtaW4=

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bm2c-kck-sct
+  namespace: keycloak
+type: Opaque
+data:
+  keycloak_admin: Ym0yY2FkbWlu
+  keycloak_admin_password: ZG1pbg==

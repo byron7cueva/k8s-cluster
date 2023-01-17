@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: keycloak
+  namespace: keycloak
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+    nginx.ingress.kubernetes.io/stream-snippet: |
+      proxy_buffer_size 128k;
+      proxy_buffers     4 256k;
+      proxy_busy_buffers_size   256k;
+spec:
+  tls:
+    - hosts:
+      - bm2ckeycloak.krugercorp.com
+      secretName: bm2c-tls-sct
+  rules:
+  - host: bm2ckeycloak.krugercorp.com
+    http:
+      paths:
+      - backend:
+          serviceName: keycloak
+          servicePort: 8080
