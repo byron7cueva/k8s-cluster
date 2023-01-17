@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: keycloak
@@ -12,12 +12,16 @@ metadata:
 spec:
   tls:
     - hosts:
-      - bm2ckeycloak.krugercorp.com
+      - bm2c.krugercorp.com
       secretName: bm2c-tls-sct
   rules:
-  - host: bm2ckeycloak.krugercorp.com
+  - host: bm2c.krugercorp.com
     http:
       paths:
-      - backend:
-          serviceName: keycloak
-          servicePort: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080

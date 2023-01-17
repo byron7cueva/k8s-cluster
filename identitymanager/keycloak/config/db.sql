@@ -1,6 +1,6 @@
 oc port-forward postgres-cluster-0 5432:5432 -n postgres
-psql -h 127.0.0.1 -U postgres
-psql -h 127.0.0.1 -U amdocs -d keycloakdb
+psql -h 192.168.1.121 -U postgres
+psql -h 192.168.1.121 -U bm2cadmin -d keycloakdb
 -- List users
 SELECT usename AS role_name,
  CASE

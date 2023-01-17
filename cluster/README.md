@@ -3,6 +3,7 @@
 ´´´shell
 # Master
 curl -sfL get.k3s.io | K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="server --disable traefik --flannel-backend host-gw --write-kubeconfig=/home/bcueva/.kube/config --node-name master" sh -s -
+curl -sfL get.k3s.io | K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="server --disable traefik,servicelb --write-kubeconfig=/home/bcueva/.kube/config --node-name master" sh -s -
 # Get Token
 sudo cat /var/lib/rancher/k3s/server/node-token
 
@@ -24,3 +25,13 @@ kubectl label nodes worker2 nodegroup-type=tools node-role.kubernetes.io/worker=
 kubectl create namespace tools
 kubectl create deployment multitool --image=praqma/network-multitool -n tools
 ´´´
+
+kubectl patch service postgres-cluster \
+-n postgres \
+-p '{"spec": {"externalIPs":["192.168.1.120","192.168.1.121"]}}'
+
+
+
+kubectl patch service ingress-nginx-controller \
+-n ingress-nginx \
+-p '{"spec": {"externalIPs":["192.168.1.120","192.168.1.121"]}}'
