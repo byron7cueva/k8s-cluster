@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: keycloak
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: keycloak
+        image: quay.io/keycloak/keycloak:20.0.2
+        args: ["start-dev"]
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        env:
+        - name: KEYCLOAK_ADMIN
+          valueFrom:
+            secretKeyRef:
+              name: bm2c-kck-sct
+              key: keycloak_admin
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: bm2c-kck-sct
+              key: keycloak_admin_password
+        - name: KC_DB
+          value: postgres
+        - name: KC_DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: bm2c-db-sct
+              key: kc_db_url
+        - name: KC_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: bm2c-db-sct
+              key: kc_db_username
+        - name: KC_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: bm2c-db-sct
+              key: kc_db_password
+        - name: DB_SCHEMA
+          value: keycloak
+        - name: KC_PROXY
+          value: "edge"
+        ports:
+        - name: http
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /realms/master
+            port: 8080
+        volumeMounts:
+          - name: bm2c-kckthemes-vlm
+            mountPath: /opt/keycloak/themes
+      volumes:
+        - name: bm2c-kckthemes-vlm
+          nfs:
+            server: 192.168.1.122
+            path: /opt/nfs/keycloak/themes

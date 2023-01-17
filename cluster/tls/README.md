@@ -1,0 +1,1 @@
+kubectl create secret tls bm2c-tls-sct --key tls.key --cert tls.crt -n namespace

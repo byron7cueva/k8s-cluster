@@ -64,7 +64,15 @@ kubectl get pods -l application=spilo -L spilo-role -n postgres
 kubectl get svc -l application=spilo -L spilo-role -n postgres
 
 kubectl get secret -n postgres
-oc get secret postgres.postgres-cluster.credentials.postgresql.acid.zalan.do -n postgres -o 'jsonpath={.data.password}' |  base64 -d
+kubectl get secret postgres.postgres-cluster.credentials.postgresql.acid.zalan.do -n postgres -o 'jsonpath={.data.password}' |  base64 -d
+
+# Patch
+kubectl patch service postgres-cluster \
+-n postgres \
+-p '{"spec": {"externalIPs":["192.168.1.120","192.168.1.121"]}}'
+kubectl patch service postgres-cluster-repl \
+-n postgres \
+-p '{"spec": {"externalIPs":["192.168.1.120","192.168.1.121"]}}'
 ```
 
 ### Delete cluster
